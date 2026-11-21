@@ -1,5 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { DatePipe, UpperCasePipe } from '@angular/common';
+
+export interface Task {
+  id: number;
+  title: string;
+  completed: boolean;
+  priority: 'low' | 'medium' | 'high';
+  dueDate?: string;
+}
 
 @Component({
   imports: [DatePipe, UpperCasePipe],
@@ -8,26 +16,26 @@ import { DatePipe, UpperCasePipe } from '@angular/common';
   templateUrl: './task-flow.html',
 })
 export class TaskFlow {
-  counter = 3;
-  tasks = [
-    { id: 0, title: 't1', dueDate: '2026-11-15' },
-    { id: 1, title: 't2', dueDate: '2026-11-15' },
-  ];
+  counter = 1;
+  tasks = signal<Task[]>([]);
+  count = computed(() => this.tasks().length);
   title = 'TaskFlow';
-  canDelete = false;
+  canDelete = computed(() => this.count() > 0);
   rename() {
     this.title = 'Mes taches';
-    this.canDelete = true;
   }
   add() {
-    const task = { id: this.counter, title: `t${this.counter}`, dueDate: '2026-11-15' };
-    this.tasks.push(task);
+    const t: Task = {
+      id: this.counter,
+      title: `t${this.counter}`,
+      completed: false,
+      priority: 'low',
+      dueDate: '2026-11-15',
+    };
+    this.tasks.update((list) => [...list, t]);
     this.counter++;
   }
   delete() {
-    this.title = 'Deleted';
-    this.canDelete = false;
-    this.tasks.shift();
-    this.counter--;
+    this.tasks.update((list) => list.slice(1));
   }
 }

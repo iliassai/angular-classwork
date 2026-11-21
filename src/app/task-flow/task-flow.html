@@ -1,18 +1,27 @@
-<h1>{{ title }}</h1>
-<button (click)="rename()">Renomer</button>
-<button [disabled]="!canDelete" (click)="delete()">Supprimer</button>
-<button (click)="add()">Ajouter</button>
+<div class="p-4">
+  <h1 class="text-xl font-bold mb-2">{{ title }}</h1>
 
-@if (tasks.length === 0) {
-  <p class="empty">Aucune tache pour l'instant</p>
-} @else {
-  <ul>
-    @for (task of tasks; track task.id) {
-      <li>
-        <p>{{ task.title | uppercase }}</p>
+  <div class="flex gap-2 mb-2">
+    <button class="border px-2 py-1" (click)="rename()">Renommer</button>
+    <button
+      class="border px-2 py-1 disabled:opacity-40"
+      [disabled]="!canDelete()"
+      (click)="delete()"
+    >
+      Supprimer
+    </button>
+    <button class="border px-2 py-1" (click)="add()">Ajouter</button>
+  </div>
 
-        <p>{{ task.dueDate | date: 'dd/MM/yyyy' }}</p>
-      </li>
-    }
-  </ul>
-}
+  <p class="mb-2">Nombre de taches : {{ count() }}</p>
+
+  @if (count() === 0) {
+    <p>Aucune tache pour l'instant</p>
+  } @else {
+    <ul class="list-disc pl-5">
+      @for (task of tasks(); track task.id) {
+        <li>{{ task.title | uppercase }} ({{ task.dueDate | date: 'dd/MM/yyyy' }})</li>
+      }
+    </ul>
+  }
+</div>
